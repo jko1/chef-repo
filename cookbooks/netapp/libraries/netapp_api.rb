@@ -60,8 +60,8 @@ module NetApp
 
       # The vserver name is set as vfiler in case of a tunneled connection.
       @server.set_vfiler(svm) if svm
-      return @server.invoke_elem(request)
-      # return result
+      # return @server.invoke_elem(request)
+      @server.invoke_elem(request)
     end
 
     def check_errors!(result, resource, action)
