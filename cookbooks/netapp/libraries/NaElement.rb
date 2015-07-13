@@ -282,8 +282,8 @@ class NaElement
   # This method converts reserved HTML characters to corresponding entity names.
   def NaElement::escapeHTML(cont)
 	cont = cont.gsub('&','&amp;')
-	cont = cont.gsub('<','&lt;')
-	cont = cont.gsub('>','&gt;')
+	# cont = cont.gsub('<','&lt;')
+	# cont = cont.gsub('>','&gt;')
 	cont = cont.gsub("'",'&apos;')
 	cont = cont.gsub('"','&quot;')
 	
