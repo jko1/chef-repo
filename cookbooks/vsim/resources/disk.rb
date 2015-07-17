@@ -1,7 +1,7 @@
 # Cookbook Name:: vsim
 # Resource:: disk
 
-actions :assign, :delete
+actions :assign, :remove_owner
 default_action :assign
 
 #Serves as the owner name (create)
