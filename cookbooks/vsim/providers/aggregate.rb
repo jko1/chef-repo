@@ -84,7 +84,7 @@ action :delete do
 
   netapp_aggr_api[:api_name] = "aggr-destroy"
   netapp_aggr_api[:resource] = "aggregate"
-  netapp_aggr_api[:action] = "create"
+  netapp_aggr_api[:action] = "delete"
   netapp_aggr_api[:api_attribute]["aggregate"] = new_resource.name
   netapp_aggr_api[:api_attribute]["plex"] = new_resource.plex unless new_resource.plex.nil?
 
