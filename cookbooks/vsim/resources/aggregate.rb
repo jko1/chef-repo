@@ -1,5 +1,4 @@
-# Author:: Arjun Hariharan (<Arjun.Hariharan@Clogeny.com>)
-# Cookbook Name:: netapp
+# Cookbook Name:: vsim
 # Resource:: volume
 #
 # Copyright:: 2014, Chef Software, Inc <legal@getchef.com>
@@ -16,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-actions :create, :delete
+actions :create, :delete, :relocation
 default_action :create
 
 attribute :name, :kind_of => String, :required => true, :name_attribute => true
@@ -43,3 +42,5 @@ attribute :raid_type, :kind_of => String, :equal_to => ["raid4", "raid_dp"]
 attribute :rpm, :kind_of => Integer, :equal_to => [5400, 7200, 10000, 15000]
 attribute :striping, :kind_of => String, :equal_to => ["striped", "not_striped", "unknown"]
 attribute :plex, :kind_of => String
+attribute :aggregate_list, :kind_of => Array
+attribute :source_node_name, :kind_of => String

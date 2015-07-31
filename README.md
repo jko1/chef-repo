@@ -1,3 +1,10 @@
++===============================================+
+|												|
+|			DOCUMENTATION AVAILABLE AT 	 		|
+|	https://wikid.netapp.com/w/Chefguidelines	|
+|												|
++===============================================+
+
 Overview
 ========
 

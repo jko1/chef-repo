@@ -38,7 +38,7 @@ action :ha_mode do
 		node_name = ["vsim3", "vsim4"]
 	end
 
-	ruby_block "ha mode?" do
+	ruby_block "ha mode" do
 		block do
 			# Restart
 			execute_cmd =  "ssh admin@" + node['username'] + "-" + node_name[0] +  ".sim.netapp.com "

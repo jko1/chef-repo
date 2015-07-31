@@ -1,3 +1,12 @@
++===============================================+
+|                                               |
+|          DOCUMENTATION AVAILABLE AT           |
+| https://wikid.netapp.com/w/Chefguidelines     |
+|                                               |
++===============================================+
+
+
+
 vsim Cookbook
 =============
 TODO: Enter the cookbook description here.

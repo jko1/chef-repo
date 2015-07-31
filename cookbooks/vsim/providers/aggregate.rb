@@ -20,6 +20,7 @@
 # The difference is how the node-name is put in XML format.
 
 include NetApp::Api
+include Vsim::Api
 
 action :create do
   # validations
@@ -56,26 +57,15 @@ action :create do
 
     #Make XML
     request = generate_request(netapp_aggr_api[:api_name], netapp_aggr_api[:api_attribute])
-
-    node_xml =  NaElement.new("nodes")
-    node_xml.child_add(NaElement.new("node-name", new_resource.nodes))
-    request.child_add(node_xml)
-
-    # Lines from inoke function
-    if netapp_aggr_api[:svm].empty?
-      response = invoke_api(request)
-    else
-      response = invoke_api(request, netapp_aggr_api[:svm])
-    end
-    resource_update = check_errors!(response, netapp_aggr_api[:resource], netapp_aggr_api[:action])
+    request.child_add(nest_elem("nodes", "node-name", new_resource.nodes))
+    
+    #Invoke API
+    resource_update = invoke_NAElem(netapp_aggr_api, request)
 
   else # Normal execution
     resource_update = invoke(netapp_aggr_api)
-    new_resource.updated_by_last_action(true) if resource_update
   end
-
     new_resource.updated_by_last_action(true) if resource_update
-
 end
 
 action :delete do
@@ -91,4 +81,30 @@ action :delete do
   # Invoke NetApp API.
   resource_update = invoke(netapp_aggr_api)
   new_resource.updated_by_last_action(true) if resource_update
+end
+
+action :relocation do
+
+  if new_resource.name.nil? or new_resource.source_node_name.nil? or new_resource.aggregate_list.nil? 
+      raise ArgumentError, "Name, source node name, or aggregate list is missing"
+  end
+
+  netapp_aggr_api = netapp_hash
+
+  netapp_aggr_api[:api_name] = "aggr-relocation"
+  netapp_aggr_api[:resource] = "aggregate"
+  netapp_aggr_api[:action] = "relocation"
+
+  #The destination node is the name of the resource
+  netapp_aggr_api[:api_attribute]["destination-node-name"] = new_resource.name
+  netapp_aggr_api[:api_attribute]["source-node-name"] = new_resource.source_node_name
+
+  #Make XML
+  request = generate_request(netapp_aggr_api[:api_name], netapp_aggr_api[:api_attribute])
+  request.child_add(nest_elem("aggregate-list", "string", new_resource.aggregate_list))
+
+  #Invoke API
+  resource_update = invoke_NAElem(netapp_aggr_api, request)
+  new_resource.updated_by_last_action(true) if resource_update
+
 end

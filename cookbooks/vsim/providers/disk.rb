@@ -2,6 +2,7 @@
 # Resource:: disk
 
 include NetApp::Api
+include Vsim::Api
 
 action :assign do
 
@@ -33,23 +34,13 @@ action :remove_owner do
 	netapp_aggr_api[:resource] = "disk"
 	netapp_aggr_api[:action] = "remove"
 
-    # Make XML
-    request = generate_request(netapp_aggr_api[:api_name], netapp_aggr_api[:api_attribute])
+  # Make XML
+  request = generate_request(netapp_aggr_api[:api_name], netapp_aggr_api[:api_attribute])
+  request.child_add(nest_elem("disk-list", "disk-name", new_resource.disk_list))
 
-    # Add list of disks to remove
-    disk_xml =  NaElement.new("disk-list")
-    new_resource.disk_list.each do |disk_name|
-	    disk_xml.child_add(NaElement.new("disk-name", disk_name))
-    end
-    request.child_add(disk_xml)
+  #Invoke API
+  resource_update = invoke_NAElem(netapp_aggr_api, request)
 
-    # Lines from invoke function
-    if netapp_aggr_api[:svm].empty?
-      response = invoke_api(request)
-    else
-      response = invoke_api(request, netapp_aggr_api[:svm])
-    end
-    resource_update = check_errors!(response, netapp_aggr_api[:resource], netapp_aggr_api[:action])
-    new_resource.updated_by_last_action(true) if resource_update
+  new_resource.updated_by_last_action(true) if resource_update
 
 end
