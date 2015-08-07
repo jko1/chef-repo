@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-actions :create, :delete, :relocation
+actions :create, :delete, :relocation, :rename, :state, :add
 default_action :create
 
 attribute :name, :kind_of => String, :required => true, :name_attribute => true
@@ -44,3 +44,5 @@ attribute :striping, :kind_of => String, :equal_to => ["striped", "not_striped",
 attribute :plex, :kind_of => String
 attribute :aggregate_list, :kind_of => Array
 attribute :source_node_name, :kind_of => String
+attribute :new_aggr_name, :kind_of => String
+attribute :state, :kind_of => String

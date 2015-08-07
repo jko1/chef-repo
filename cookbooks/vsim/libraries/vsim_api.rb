@@ -24,7 +24,7 @@ module Vsim
 		# 		...
 		# 		<child_name> value2 </child_name>
 		# 	</root_name>
-		# Values can be a string or array
+		# Values can be a string or array; names are strings
 		def nest_elem(root_name, child_name, values)
 			xml = NaElement.new(root_name)
 			if values.instance_of? String
@@ -36,6 +36,6 @@ module Vsim
 	    	end
 	   		return xml
 	   	end
-
+   	
 	end
 end

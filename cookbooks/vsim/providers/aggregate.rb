@@ -85,8 +85,8 @@ end
 
 action :relocation do
 
-  if new_resource.name.nil? or new_resource.source_node_name.nil? or new_resource.aggregate_list.nil? 
-      raise ArgumentError, "Name, source node name, or aggregate list is missing"
+  if new_resource.source_node_name.nil? or new_resource.aggregate_list.nil? 
+      raise ArgumentError, "Source node name or aggregate list is missing"
   end
 
   netapp_aggr_api = netapp_hash
@@ -107,4 +107,77 @@ action :relocation do
   resource_update = invoke_NAElem(netapp_aggr_api, request)
   new_resource.updated_by_last_action(true) if resource_update
 
+end
+
+action :rename do 
+
+  netapp_aggr_api = netapp_hash
+
+  netapp_aggr_api[:api_name] = "aggr-rename"
+  netapp_aggr_api[:resource] = "aggregate"
+  netapp_aggr_api[:action] = "rename"
+
+  netapp_aggr_api[:api_attribute]["aggregate"] = new_resource.name
+  netapp_aggr_api[:api_attribute]["new-aggregate-name"] = new_resource.new_aggr_name
+
+  # Invoke NetApp API.
+  resource_update = invoke(netapp_aggr_api)
+  new_resource.updated_by_last_action(true) if resource_update
+end
+
+action :state do
+
+  if new_resource.state.nil?
+      raise ArgumentError, "Aggregate state is missing."
+  end
+
+  netapp_aggr_api = netapp_hash
+  if new_resource.state == "offline"
+    netapp_aggr_api[:api_name] = "aggr-offline"
+  elsif new_resource.state == "online"
+    netapp_aggr_api[:api_name] = "aggr-online"
+  else
+    raise ArgumentError, "Only valid states are offline and online."
+  end
+
+  netapp_aggr_api[:resource] = "aggregate"
+  netapp_aggr_api[:api_attribute]["aggregate"] = new_resource.name
+  netapp_aggr_api[:action] = "state"
+
+  # Invoke NetApp API.
+  resource_update = invoke(netapp_aggr_api)
+  new_resource.updated_by_last_action(true) if resource_update
+
+end
+
+action :add do 
+
+  if !(new_resource.disks.nil? ^ new_resource.disk_count.nil?)
+    raise ArgumentError, "Either disks or disk_count must be filled."
+  end
+
+  netapp_aggr_api = netapp_hash
+
+  netapp_aggr_api[:api_name] = "aggr-add"
+  netapp_aggr_api[:resource] = "aggregate"
+  netapp_aggr_api[:action] = "add"
+
+  netapp_aggr_api[:api_attribute]["aggregate"] = new_resource.name
+
+  if !new_resource.disk_count.nil?
+    netapp_aggr_api[:api_attribute]["disk-count"] = new_resource.disk_count
+    resource_update = invoke(netapp_aggr_api)
+  else
+    request = generate_request(netapp_aggr_api[:api_name], netapp_aggr_api[:api_attribute])
+    disk_xml = NaElement.new("disks")
+
+    new_resource.disks.each do |value| 
+      disk_xml.child_add(nest_elem("disk-info", "name", value))
+    end
+    request.child_add(disk_xml)
+
+    resource_update = invoke_NAElem(netapp_aggr_api, request)
+  end
+
+  new_resource.updated_by_last_action(true) if resource_update
 end
