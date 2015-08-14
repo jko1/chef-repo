@@ -1,0 +1,4 @@
+actions :setup_ha, :setup_iscsi
+default_action :setup_ha
+
+attribute :name, :kind_of => String, :required => true, :name_attribute => true

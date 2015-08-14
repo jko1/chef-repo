@@ -11,8 +11,16 @@ action :setup do
 		raise ArgumentError, "Not an acceptable profile."
 	end
 
-	# Run the command "vsim make -pro <profile_name> -ir <build_path> -auto"
-	execute  "ssh " + node['username'] + "@" + node['host'] + " \" vsim make -pro " + new_resource.profile + " -ir " + node['build_path'] + " -auto \"" do
+	ssh_str =  "ssh " + node['username'] + "@" + node['host'] + " \" "
+	if !new_resource.mode.nil? and new_resource.mode == "aws"
+		ssh_str += "/u/schs,rtp/space/vsim_reference/main/vsim make -auto -pro " + new_resource.profile + " -ir " + node['build_path'] + " -d -ev "
+		ssh_str += "\"bootarg.cg.cg_mode_disabled=true,bootarg.srm.vmhostinfo=false\" -noshareha \""
+	else 
+		# The command "vsim make -pro <profile_name> -ir <build_path> -auto"
+		ssh_str += "vsim make -pro " + new_resource.profile + " -ir " + node['build_path'] + " -auto \""
+	end
+
+	execute ssh_str do
 		new_resource.updated_by_last_action(true) 
 	end
 	
@@ -54,5 +62,21 @@ action :ha_mode do
 			system execute_cmd
 
 		end
+	end
+end
+
+action :reboot do
+
+	ssh_str = "ssh admin@" + node['node_list'][0] +  ".sim.netapp.com "
+	ssh_str += "\"system node reboot -node " 
+	if new_resource.name == "all"
+		ssh_str += "*"
+	else 
+		ssh_str +=  new_resource.name
+	end
+	ssh_str += " -ignore-quorum-warnings; \""
+
+	execute ssh_str do
+		new_resource.updated_by_last_action(true) 
 	end
 end

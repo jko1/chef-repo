@@ -1,5 +1,5 @@
 # Cookbook Name:: vsim
-# Resource:: volume
+# Resource:: aggregate
 #
 # Copyright:: 2014, Chef Software, Inc <legal@getchef.com>
 #
@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-actions :create, :delete, :relocation, :rename, :state, :add
+actions :create, :delete, :relocation, :rename, :state, :add, :mirror
 default_action :create
 
 attribute :name, :kind_of => String, :required => true, :name_attribute => true

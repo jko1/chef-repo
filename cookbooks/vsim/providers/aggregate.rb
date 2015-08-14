@@ -181,3 +181,18 @@ action :add do
 
   new_resource.updated_by_last_action(true) if resource_update
 end
+
+action :mirror do
+  # Create API Request.
+  netapp_aggr_api = netapp_hash
+
+  netapp_aggr_api[:api_name] = "aggr-mirror"
+  netapp_aggr_api[:resource] = "aggregate"
+  netapp_aggr_api[:action] = "mirror"
+  netapp_aggr_api[:api_attribute]["aggregate"] = new_resource.name
+
+  # Invoke NetApp API.
+  resource_update = invoke(netapp_aggr_api)
+  new_resource.updated_by_last_action(true) if resource_update
+
+end
