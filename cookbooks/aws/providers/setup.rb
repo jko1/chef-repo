@@ -24,3 +24,32 @@ action :setup_iscsi do
 
 end
 
+
+action :setup_mediator_disk do 
+
+	ruby_block "get mediator disk" do
+		block do
+			ssh_str = "ssh admin@" + node['node_list'][0] +  ".sim.netapp.com "
+			ssh_str += " \" node run -node koj-vsim1 -command \"disk show -n \" \" "
+			result = %x( #{ssh_str} )
+			mediator_disk = []
+			result.each_line do |line|
+    			if line[0,2] == '0f' and mediator_disk.length!=2
+    				# Gets disk name
+    				temp = line.gsub(/\s+/m, ' ').gsub(/^\s+|\s+$/m, '').split(" ")[0]
+    				mediator_disk.push(temp)
+				end
+			end
+			
+			if mediator_disk.length==2
+				ssh_str = "ssh admin@" + node['node_list'][0] +  ".sim.netapp.com "
+				ssh_str +=  " \" node run -node " + node['node_list'][0] + " -command \"disk assign " + mediator_disk[0] + "\";"
+				ssh_str +=  " node run -node " + node['node_list'][1] + " -command \"disk assign " + mediator_disk[1] + "\" \" "
+				cmd_result = system ssh_str
+				new_resource.updated_by_last_action(true) if cmd_result
+			end 
+		end
+	end
+end
+
+

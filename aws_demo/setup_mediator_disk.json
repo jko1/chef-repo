@@ -1,0 +1,3 @@
+{
+  "run_list": [ "recipe[aws::setup_mediator_disk]" ]
+}
