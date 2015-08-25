@@ -1,5 +1,6 @@
 Overview
 ========
+This contains custom cookbooks for using Chef to automate NetApp Cluster Data ONTAP management.
 
 There is a cookbook for commands on the VSIM (simulates NetApp nodes). There is also another cookbook for setting up VSIMs in High Availability mode for AWS. View the ChefGuidelines.pdf for more information. 
 
